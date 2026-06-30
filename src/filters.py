@@ -6,20 +6,6 @@ from src.fft import (
 )
 
 
-# --- Moving Average Filter (miền thời gian) ---
-
-def moving_average_filter(signal: list, window_size: int = 5) -> list:
-    n      = len(signal)
-    output = [0.0] * n
-    half_w = window_size // 2
-    for i in range(n):
-        start = max(0, i - half_w)
-        end   = min(n, i + half_w + 1)
-        vals  = signal[start:end]
-        output[i] = sum(vals) / len(vals)
-    return output
-
-
 # --- Ước lượng nhiễu nền từ 0.5s đầu file ---
 
 def estimate_noise_profile(signal: list, sample_rate: int,

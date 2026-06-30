@@ -2,49 +2,27 @@ import os
 import time
 from src.audio_io import read_wav, write_wav, mono_mix
 from src.filters import (
-    moving_average_filter,
     spectral_subtraction,
     wiener_filter,
     compute_rms,
 )
-from src.filters_advanced import (
-    median_filter,
-    mmse_stsa,
-    kalman_filter,
-    adaptive_kalman_filter,
-)
 from src.parallel_engine import (
-    parallel_moving_average,
-    parallel_median,
     parallel_spectral_subtraction,
     parallel_wiener,
-    parallel_mmse_stsa,
-    parallel_kalman,
 )
 
 # --- Tham số mặc định cho từng bộ lọc ---
 DEFAULT_CONFIG = {
-    "moving_average":       {"window_size": 15},
     "spectral_subtraction": {"noise_duration_sec": 0.5, "alpha_max": 5.0,
                               "alpha_min": 1.0, "beta": 0.01,
                               "frame_size": 1024, "hop_size": 512},
     "wiener":               {"noise_duration_sec": 0.5, "alpha_dd": 0.98,
                               "frame_size": 1024, "hop_size": 512},
-    "median":               {"window_size": 7},
-    "mmse_stsa":            {"noise_duration_sec": 0.5, "alpha_dd": 0.98,
-                              "frame_size": 1024, "hop_size": 512},
-    "kalman":               {"process_noise_var": 1e-5, "measurement_noise_var": 0.01},
-    "adaptive_kalman":      {"window_size": 1000, "base_process_noise": 1e-5},
 }
 
 FILTER_DISPLAY_NAMES = {
-    "moving_average":       "Moving Average Filter",
     "spectral_subtraction": "Spectral Subtraction",
     "wiener":               "Wiener Filter",
-    "median":               "Median Filter",
-    "mmse_stsa":            "MMSE-STSA (Ephraim-Malah)",
-    "kalman":               "Kalman Filter (1D)",
-    "adaptive_kalman":      "Adaptive Kalman Filter",
 }
 
 ALL_FILTERS = list(FILTER_DISPLAY_NAMES.keys())
@@ -53,20 +31,10 @@ ALL_FILTERS = list(FILTER_DISPLAY_NAMES.keys())
 # --- Gọi filter theo chế độ tuần tự ---
 
 def _run_sequential(signal: list, sample_rate: int, filter_name: str, cfg: dict) -> list:
-    if filter_name == "moving_average":
-        return moving_average_filter(signal, **cfg)
-    elif filter_name == "spectral_subtraction":
+    if filter_name == "spectral_subtraction":
         return spectral_subtraction(signal, sample_rate, **cfg)
     elif filter_name == "wiener":
         return wiener_filter(signal, sample_rate, **cfg)
-    elif filter_name == "median":
-        return median_filter(signal, **cfg)
-    elif filter_name == "mmse_stsa":
-        return mmse_stsa(signal, sample_rate, **cfg)
-    elif filter_name == "kalman":
-        return kalman_filter(signal, **cfg)
-    elif filter_name == "adaptive_kalman":
-        return adaptive_kalman_filter(signal, **cfg)
     raise ValueError(f"Unknown filter: {filter_name}")
 
 
@@ -74,21 +42,11 @@ def _run_sequential(signal: list, sample_rate: int, filter_name: str, cfg: dict)
 
 def _run_parallel(signal: list, sample_rate: int, filter_name: str,
                   cfg: dict, num_workers: int) -> list:
-    if filter_name == "moving_average":
-        return parallel_moving_average(signal, num_workers=num_workers, **cfg)
-    elif filter_name == "spectral_subtraction":
+    if filter_name == "spectral_subtraction":
         return parallel_spectral_subtraction(signal, sample_rate,
                                               num_workers=num_workers, **cfg)
     elif filter_name == "wiener":
         return parallel_wiener(signal, sample_rate, num_workers=num_workers, **cfg)
-    elif filter_name == "median":
-        return parallel_median(signal, num_workers=num_workers, **cfg)
-    elif filter_name == "mmse_stsa":
-        return parallel_mmse_stsa(signal, sample_rate, num_workers=num_workers, **cfg)
-    elif filter_name == "kalman":
-        return parallel_kalman(signal, num_workers=num_workers, **cfg)
-    elif filter_name == "adaptive_kalman":
-        return adaptive_kalman_filter(signal, **cfg)
     raise ValueError(f"Unknown filter: {filter_name}")
 
 
