@@ -1,0 +1,9 @@
+# Parallel Audio Noise Reduction
+# Dự án cuối kỳ — Tính toán song song
+
+# Thư viện cần thiết (chỉ dùng built-in Python + matplotlib)
+matplotlib>=3.7.0   # Vẽ biểu đồ benchmark (chưa cần ngay)
+
+# KHÔNG dùng:
+# scipy, librosa, soundfile, numpy.fft, pydub
+# Tất cả thuật toán đều tự cài đặt từ đầu
