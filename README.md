@@ -18,12 +18,8 @@
 - 🚫 **Pure Python DSP Engine**: Custom implementation of the **Fast Fourier Transform (FFT)** using the Cooley-Tukey algorithm, Hann window function, and Overlap-Add method.
 - 🚀 **Parallel Processing (Multiprocessing)**: Bypasses Python's GIL by splitting the audio signal into smaller chunks (with overlap) and processing them concurrently using multi-threading/multi-processing. Automatically merges chunks using Linear Cross-Fade to prevent clicking or popping artifacts.
 - 🎛️ **Diverse Noise Reduction Algorithms**:
-  - `moving_average`: Time-domain Moving Average Filter.
-  - `median`: Time-domain Median Filter.
   - `spectral_subtraction`: Frequency-domain Adaptive Spectral Subtraction.
   - `wiener`: Frequency-domain SNR-optimized Wiener Filter.
-  - `mmse_stsa`: Minimum Mean-Square Error Short-Time Spectral Amplitude estimator (Ephraim-Malah).
-  - `kalman` & `adaptive_kalman`: 5-step Kalman Filter (Time-domain/State-space).
 - 🖥️ **Modern GUI**: Includes an intuitive Graphical User Interface (built with `tkinter` + `matplotlib`) to test algorithms, compare pre/post processing waveforms, and observe real-time RMS reduction.
 - 📊 **CLI & Benchmark Tool**: Built-in powerful Command Line Interface and automated benchmark engine to evaluate speedup and Amdahl's Law.
 
@@ -38,8 +34,7 @@ ckTTSS/
 ├── src/                     # Core DSP Engine
 │   ├── audio_io.py          # Read/Write WAV files (using Python struct)
 │   ├── fft.py               # Cooley-Tukey FFT / IFFT algorithms
-│   ├── filters.py           # Spectral Subtraction, Wiener, Moving Average
-│   ├── filters_advanced.py  # MMSE-STSA, Kalman, Median Filter
+│   ├── filters.py           # Spectral Subtraction, Wiener
 │   ├── parallel_engine.py   # Multiprocessing Pool & Chunking Manager
 │   ├── noise_reduction.py   # Orchestrator pipeline
 │   └── benchmark.py         # Parallel processing performance benchmarking
@@ -89,13 +84,11 @@ python main.py process --input input/hello_en_noisy.wav
 # Specify the Wiener algorithm and a specific number of workers (e.g., 8 cores)
 python main.py process --input input/hello_en_noisy.wav --filter wiener --mode parallel --workers 8
 
-# Process using the MMSE-STSA algorithm in sequential mode (1 thread)
-python main.py process --input input/hello_en_noisy.wav --filter mmse_stsa --mode sequential
 ```
 
 #### Process an entire directory (Batch Processing):
 ```bash
-python main.py process --input-dir input --output-dir output --filter kalman
+python main.py process --input-dir input --output-dir output --filter wiener
 ```
 
 #### Run System Benchmark:
